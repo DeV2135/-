@@ -182,12 +182,7 @@ async def get_msg(userbot, sender, edit_id, msg_link, i, message):
                 chat = int('-100' + parts[parts.index('c') + 1])
                 msg_id = int(parts[-1]) + i
 
-            if chat in saved_channel_ids:
-                await app.edit_message_text(
-                    message.chat.id, edit_id,
-                    "Sorry! This channel is protected by **__Team SPY__**."
-                )
-                return
+      
             
         elif 't.me/s/' in msg_link:
             edit = await app.edit_message_text(sender, edit_id, "Story Link Dictected...")
@@ -206,7 +201,7 @@ async def get_msg(userbot, sender, edit_id, msg_link, i, message):
             return
         
         else:
-            edit = await app.edit_message_text(sender, edit_id, "Public link detected...")
+            edit = await app.edit_message_text(sender, edit_id, "uploading malik")
             chat = msg_link.split("t.me/")[1].split("/")[0]
             msg_id = int(msg_link.split("/")[-1])
             await copy_message_with_chat_id(app, userbot, sender, chat, msg_id, edit)
@@ -836,7 +831,7 @@ async def handle_large_file(file, sender, edit, caption):
         if freecheck == 1:
             reply_markup = InlineKeyboardMarkup(
                 [
-                    [InlineKeyboardButton("💎 Get Premium to Forward", url="https://t.me/kingofpatal")]
+                    [InlineKeyboardButton("💎 Get Premium to Forward", url="https://t.me/owner_dev_bot_save_bot")]
                 ]
             )
             await app.copy_message(
