@@ -1,5 +1,4 @@
-# ---------------------------------------------------
-# File Name: __main__.py
+# ---------------------------------------------------# File Name: __main__.py
 # Description: A Pyrogram bot for downloading files from Telegram channels or groups 
 #              and uploading them back to Telegram.
 # Author: Gagan
@@ -42,7 +41,7 @@ async def devggn_boot():
                 and uploading them back to Telegram.
 👨‍💻 Author: Gagan
 🌐 GitHub: https://github.com/devgaganin/
-📬 Telegram: https://t.me/team_spy_pro
+📬 Telegram: https://t.me/owner_dev_bot_save_bot
 ▶️ YouTube: https://youtube.com/@dev_gagan
 🗓️ Created: 2025-01-11
 🔄 Last Modified: 2025-01-11
