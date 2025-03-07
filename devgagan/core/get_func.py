@@ -82,7 +82,10 @@ async def upload_media(sender, target_chat_id, file, caption, edit, topic_id):
         upload_method = await fetch_upload_method(sender)  # Fetch the upload method (Pyrogram or Telethon)
         metadata = video_metadata(file)
         width, height, duration = metadata['width'], metadata['height'], metadata['duration']
-        thumb_path = await screenshot(file, duration, sender)
+        try:
+            thumb_path = await screenshot(file, duration, sender)
+        except Exception:
+            thumb_path = None
 
         video_formats = {'mp4', 'mkv', 'avi', 'mov'}
         document_formats = {'pdf', 'docx', 'txt', 'epub'}
@@ -226,7 +229,8 @@ async def get_msg(userbot, sender, edit_id, msg_link, i, message):
             
         # Fetch the target message
         msg = await userbot.get_messages(chat, msg_id)
-        if not msg or msg.service or msg.empty:
+        if msg.service or msg.empty:
+            await app.delete_messages(sender, edit_id)
             return
 
         target_chat_id = user_chat_ids.get(message.chat.id, message.chat.id)
@@ -274,18 +278,29 @@ async def get_msg(userbot, sender, edit_id, msg_link, i, message):
             result = await app.send_audio(target_chat_id, file, caption=caption, reply_to_message_id=topic_id)
             await result.copy(LOG_GROUP)
             await edit.delete(2)
+            os.remove(file)
             return
         
         if msg.voice:
             result = await app.send_voice(target_chat_id, file, reply_to_message_id=topic_id)
             await result.copy(LOG_GROUP)
             await edit.delete(2)
+            os.remove(file)
+            return
+
+
+        if msg.video_note:
+            result = await app.send_video_note(target_chat_id, file, reply_to_message_id=topic_id)
+            await result.copy(LOG_GROUP)
+            await edit.delete(2)
+            os.remove(file)
             return
 
         if msg.photo:
             result = await app.send_photo(target_chat_id, file, caption=caption, reply_to_message_id=topic_id)
             await result.copy(LOG_GROUP)
             await edit.delete(2)
+            os.remove(file)
             return
 
         # Upload media
@@ -421,6 +436,11 @@ async def copy_message_with_chat_id(app, userbot, sender, chat_id, message_id, e
         # Fallback if result is None
         if result is None:
             await edit.edit("Trying if it is a group...")
+            try:
+                await userbot.join_chat(chat_id)
+            except Exception as e:
+                print(e)
+                pass
             chat_id = (await userbot.get_chat(f"@{chat_id}")).id
             msg = await userbot.get_messages(chat_id, message_id)
 
@@ -443,6 +463,7 @@ async def copy_message_with_chat_id(app, userbot, sender, chat_id, message_id, e
                 result = await app.send_photo(target_chat_id, file, caption=final_caption, reply_to_message_id=topic_id)
             elif msg.video or msg.document:
                 freecheck = await chk_user(chat_id, sender)
+                file_size = get_message_file_size(msg)
                 if file_size > size_limit and (freecheck == 1 or pro is None):
                     await edit.delete()
                     await split_and_upload_file(app, sender, target_chat_id, file, caption, topic_id)
@@ -826,8 +847,10 @@ async def handle_large_file(file, sender, edit, caption):
     duration = metadata['duration']
     width = metadata['width']
     height = metadata['height']
-    
-    thumb_path = await screenshot(file, duration, sender)
+    try:
+        thumb_path = await screenshot(file, duration, sender)
+    except Exception:
+        thumb_path = None
     try:
         if file_extension in VIDEO_EXTENSIONS:
             dm = await pro.send_video(

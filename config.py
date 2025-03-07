@@ -26,4 +26,5 @@ WEBSITE_URL = getenv("WEBSITE_URL", "upshrink.com")
 AD_API = getenv("AD_API", "")
 STRING = getenv("STRING", None)
 YT_COOKIES = getenv("YT_COOKIES", YTUB_COOKIES)
+DEFAULT_SESSION = getenv("DEFAUL_SESSION", None)  # added old method of invite link joining
 INSTA_COOKIES = getenv("INSTA_COOKIES", INST_COOKIES)
